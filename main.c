@@ -10,7 +10,7 @@ GLuint shaderProgram;
 
 vec3 snakePosition;
 int pieces = 4;
-float snakeMatrix[4][16];
+mat4 snakeMatrix[4];
 
 enum Direction
 {
@@ -187,7 +187,7 @@ int main()
         // Pass the model matrix to the shader
         for (int i = 0; i < pieces; i++)
         {
-            glUniformMatrix4fv(modelLoc, 1, GL_TRUE, snakeMatrix[i]);
+            glUniformMatrix4fv(modelLoc, 1, GL_TRUE, snakeMatrix[i].data);
             glBindVertexArray(VAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         };

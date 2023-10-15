@@ -35,15 +35,6 @@ const char *loadFile(const char *filename)
     return file_content; // Return the file content as a string
 }
 
-// Matrix Math
-void mat4_identity(float matrix[16])
-{
-    for (int i = 0; i < 16; i++)
-    {
-        matrix[i] = (i % 5 == 0) ? 1.0f : 0.0f;
-    }
-}
-
 float *mat4_vec4_mult(float matrix[16], float vec[4])
 {
 
@@ -57,24 +48,6 @@ float *mat4_vec4_mult(float matrix[16], float vec[4])
     return res;
 }
 
-
-
-void mat4_scale(float matrix[16], float scale)
-{
-
-    matrix[0] *= scale;
-    matrix[5] *= scale;
-    matrix[10] *= scale;
-}
-
-void set_equal(float matrixA[16], float matrixB[16])
-{
-
-    for (int i = 0; i < 16; i++)
-    {
-        matrixA[i] = matrixB[i];
-    }
-}
 
 float *mat4_mult(float matrix_a[16], float matrix_b[16])
 {
