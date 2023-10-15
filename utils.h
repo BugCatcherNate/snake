@@ -2,7 +2,6 @@
 #define UTILS_H
 
 const char *loadFile(const char *filename);
-void mat4_translate(float matrix[16], float tx, float ty, float tz);
 void mat4_identity(float matrix[16]);
 void mat4_scale(float matrix[16], float scale);
 float *mat4_vec4_mult(float matrix[16], float vec[4]);

@@ -57,14 +57,7 @@ float *mat4_vec4_mult(float matrix[16], float vec[4])
     return res;
 }
 
-void mat4_translate(float matrix[16], float tx, float ty, float tz)
-{
 
-    // Apply the translation to the result matrix
-    matrix[3] = tx;
-    matrix[7] = ty;
-    matrix[11] = tz;
-}
 
 void mat4_scale(float matrix[16], float scale)
 {

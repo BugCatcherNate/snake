@@ -3,11 +3,12 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include "math/math.h"
 #include "utils.h"
 
 GLuint shaderProgram;
 
-float snakePosition[3];
+vec3 snakePosition;
 int pieces = 4;
 float snakeMatrix[4][16];
 
@@ -62,22 +63,22 @@ void momentum()
     if (currentDirection == LEFT)
     {
 
-        snakePosition[0] -= 0.025f;
+        snakePosition.x -= 0.025f;
     }
     else if (currentDirection == RIGHT)
     {
-        snakePosition[0] += 0.025f;
+        snakePosition.x += 0.025f;
     }
     else if (currentDirection == UP)
     {
-        snakePosition[1] += 0.025f;
+        snakePosition.y += 0.025f;
     }
     else if (currentDirection == DOWN)
     {
-        snakePosition[1] += -0.025f;
+        snakePosition.y += -0.025f;
     }
 
-    mat4_translate(snakeMatrix[0], snakePosition[0], snakePosition[1], snakePosition[2]);
+    mat4_translate(snakeMatrix[0], snakePosition);
 }
 
 int main()
@@ -171,9 +172,6 @@ int main()
 
     double last_draw = 0;
 
-    snakePosition[0] = 0.0;
-    snakePosition[1] = 0.0;
-    snakePosition[2] = 0.0;
     glfwSetKeyCallback(window, key_callback);
     while (!glfwWindowShouldClose(window))
     {
