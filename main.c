@@ -7,6 +7,7 @@
 
 GLuint shaderProgram;
 
+float snakePosition[3];
 int pieces = 4;
 float snakeMatrix[4][16];
 
@@ -32,10 +33,10 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
-    if (key == GLFW_KEY_D && action == GLFW_PRESS && currentDirection != LEFT) {
+    if (key == GLFW_KEY_D && action == GLFW_PRESS && currentDirection != LEFT)
+    {
 
         currentDirection = RIGHT;
-
     }
     else if (key == GLFW_KEY_A && action == GLFW_PRESS && currentDirection != RIGHT)
     {
@@ -46,36 +47,37 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 
         currentDirection = UP;
     }
-    else if (key == GLFW_KEY_S && action == GLFW_PRESS && currentDirection != UP) {
+    else if (key == GLFW_KEY_S && action == GLFW_PRESS && currentDirection != UP)
+    {
         currentDirection = DOWN;
     }
 }
 
 void momentum()
 {
-    for (int i = pieces; i > 0; i--){
-        set_equal(snakeMatrix[i], snakeMatrix[i-1]);
+    for (int i = pieces; i > 0; i--)
+    {
+        set_equal(snakeMatrix[i], snakeMatrix[i - 1]);
     }
-
     if (currentDirection == LEFT)
     {
 
-        mat4_translate(snakeMatrix[0], -0.025f, 0.0f, 0.0f);
+        snakePosition[0] -= 0.025f;
     }
     else if (currentDirection == RIGHT)
     {
-
-        mat4_translate(snakeMatrix[0], 0.025f, 0.0f, 0.0f);
+        snakePosition[0] += 0.025f;
     }
     else if (currentDirection == UP)
     {
-
-        mat4_translate(snakeMatrix[0], 0.0f, 0.025f, 0.0f);
+        snakePosition[1] += 0.025f;
     }
     else if (currentDirection == DOWN)
     {
-        mat4_translate(snakeMatrix[0], 0.0f, -0.025f, 0.0f);
+        snakePosition[1] += -0.025f;
     }
+
+    mat4_translate(snakeMatrix[0], snakePosition[0], snakePosition[1], snakePosition[2]);
 }
 
 int main()
@@ -158,10 +160,10 @@ int main()
     free((void *)vertexShaderSource);
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    for (int i = 0; i<pieces; i++){
-    mat4_identity(snakeMatrix[i]);
-    mat4_scale(snakeMatrix[i], 0.01f);
-
+    for (int i = 0; i < pieces; i++)
+    {
+        mat4_identity(snakeMatrix[i]);
+        mat4_scale(snakeMatrix[i], 0.01f);
     }
     // Get the location of the model matrix uniform from the shader
 
@@ -169,10 +171,12 @@ int main()
 
     double last_draw = 0;
 
+    snakePosition[0] = 0.0;
+    snakePosition[1] = 0.0;
+    snakePosition[2] = 0.0;
     glfwSetKeyCallback(window, key_callback);
     while (!glfwWindowShouldClose(window))
     {
-
 
         double seconds = glfwGetTime();
 
@@ -182,21 +186,21 @@ int main()
         glUseProgram(shaderProgram);
         GLint modelLoc = glGetUniformLocation(shaderProgram, "model");
 
-
         // Pass the model matrix to the shader
-        for (int i=0; i<pieces; i++){
-        glUniformMatrix4fv(modelLoc, 1, GL_TRUE, snakeMatrix[i]);
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        for (int i = 0; i < pieces; i++)
+        {
+            glUniformMatrix4fv(modelLoc, 1, GL_TRUE, snakeMatrix[i]);
+            glBindVertexArray(VAO);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         };
         // Pass the model matrix to the shader
- 
 
         glfwSwapBuffers(window);
         glfwPollEvents();
 
         if (seconds - last_draw >= 0.1f)
         {
+
             momentum();
             last_draw = seconds;
         }

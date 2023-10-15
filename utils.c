@@ -35,8 +35,6 @@ const char *loadFile(const char *filename)
     return file_content; // Return the file content as a string
 }
 
-
-
 // Matrix Math
 void mat4_identity(float matrix[16])
 {
@@ -46,58 +44,58 @@ void mat4_identity(float matrix[16])
     }
 }
 
+float *mat4_vec4_mult(float matrix[16], float vec[4])
+{
 
-float* mat4_vec4_mult(float matrix[16], float vec[4]){
-	
-	float res[4] = {0.0, 0.0, 0.0, 0.0};
+    float res[4] = {0.0, 0.0, 0.0, 0.0};
 
-	res[0] = matrix[0] * vec[0] + matrix[1] * vec[0] + matrix[2] * vec[0] + matrix[3]* vec[0]; 
-	res[1] = matrix[4] * vec[1] + matrix[5] * vec[1] + matrix[6] * vec[1] + matrix[7]* vec[1]; 
-	res[2] = matrix[8] * vec[2] + matrix[9] * vec[2] + matrix[10] * vec[2] + matrix[11]* vec[2]; 
-	res[3] = matrix[12] * vec[3] + matrix[13] * vec[3] + matrix[14] * vec[3] + matrix[15]* vec[3]; 
+    res[0] = matrix[0] * vec[0] + matrix[1] * vec[0] + matrix[2] * vec[0] + matrix[3] * vec[0];
+    res[1] = matrix[4] * vec[1] + matrix[5] * vec[1] + matrix[6] * vec[1] + matrix[7] * vec[1];
+    res[2] = matrix[8] * vec[2] + matrix[9] * vec[2] + matrix[10] * vec[2] + matrix[11] * vec[2];
+    res[3] = matrix[12] * vec[3] + matrix[13] * vec[3] + matrix[14] * vec[3] + matrix[15] * vec[3];
 
-	return res;
-
+    return res;
 }
 
-
-void mat4_translate(float matrix[16], float tx, float ty, float tz) {
-
+void mat4_translate(float matrix[16], float tx, float ty, float tz)
+{
 
     // Apply the translation to the result matrix
-    matrix[3] += tx;
-    matrix[7] += ty;
-    matrix[11] += tz;
-
+    matrix[3] = tx;
+    matrix[7] = ty;
+    matrix[11] = tz;
 }
 
-void mat4_scale(float matrix[16], float scale) {
-
+void mat4_scale(float matrix[16], float scale)
+{
 
     matrix[0] *= scale;
     matrix[5] *= scale;
     matrix[10] *= scale;
-
 }
 
+void set_equal(float matrixA[16], float matrixB[16])
+{
 
-void set_equal(float matrixA[16], float matrixB[16]){
-
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 16; i++)
+    {
         matrixA[i] = matrixB[i];
     }
-
 }
 
-float* mat4_mult(float matrix_a[16], float matrix_b[16]) {
-    
-    float* result = (float*)malloc(16 * sizeof(float)); // Allocate memory for the result matrix
-							//
-    for(int i = 0; i < 4; i++) {
-        for(int j = 0; j < 4; j++) {
-            result[i*4 + j] = 0;
-            for(int k = 0; k < 4; k++) {
-                result[i*4 + j] += matrix_a[i*4 + k] * matrix_b[k*4 + j];
+float *mat4_mult(float matrix_a[16], float matrix_b[16])
+{
+
+    float *result = (float *)malloc(16 * sizeof(float)); // Allocate memory for the result matrix
+                                                         //
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            result[i * 4 + j] = 0;
+            for (int k = 0; k < 4; k++)
+            {
+                result[i * 4 + j] += matrix_a[i * 4 + k] * matrix_b[k * 4 + j];
             }
         }
     }
@@ -105,13 +103,16 @@ float* mat4_mult(float matrix_a[16], float matrix_b[16]) {
     return result;
 }
 
-void printMatrix(float matrix[16]) {
-    for(int i = 0; i < 4; i++) {
-        for(int j = 0; j < 4; j++) {
+void printMatrix(float matrix[16])
+{
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
             printf("%f\t", matrix[i * 4 + j]);
         }
         printf("\n");
     }
 
-        printf("\n");
+    printf("\n");
 }
