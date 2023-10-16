@@ -34,3 +34,7 @@ const char *loadFile(const char *filename)
     fclose(file);
     return file_content; // Return the file content as a string
 }
+
+float randomFloat(float min, float max) {
+    return ((float)rand() / RAND_MAX) * (max - min) + min;
+}

@@ -8,9 +8,12 @@
 
 GLuint shaderProgram;
 
+mat4 foodMatrix;
+vec3 food_position;
 vec3 snakePosition;
 int pieces = 4;
 mat4 snakeMatrix[4];
+
 
 enum Direction
 {
@@ -187,11 +190,15 @@ int main()
         mat4_identity(&snakeMatrix[i]);
         mat4_scale(&snakeMatrix[i], 0.01f);
     }
-    // Get the location of the model matrix uniform from the shader
-
-    // Pass the model matrix to the shader
 
     double last_draw = 0;
+    food_position.x = randomFloat(-1.0, 1.0);
+    food_position.y = randomFloat(-1.0, 1.0);
+    food_position.z = 0.0;
+
+    mat4_identity(&foodMatrix);
+    mat4_scale(&foodMatrix, 0.01f);
+    mat4_translate(&foodMatrix, food_position);
 
     glfwSetKeyCallback(window, key_callback);
     while (!glfwWindowShouldClose(window))
@@ -200,26 +207,27 @@ int main()
         double seconds = glfwGetTime();
 
         glClear(GL_COLOR_BUFFER_BIT);
-        // Draw the square
 
         glUseProgram(shaderProgram);
         GLint modelLoc = glGetUniformLocation(shaderProgram, "model");
 
-        // Pass the model matrix to the shader
+        // Draw Snake
         for (int i = 0; i < pieces; i++)
         {
             glUniformMatrix4fv(modelLoc, 1, GL_TRUE, snakeMatrix[i].data);
             glBindVertexArray(VAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         };
-        // Pass the model matrix to the shader
+        // Draw Food
+        glUniformMatrix4fv(modelLoc, 1, GL_TRUE, foodMatrix.data);
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
 
         if (seconds - last_draw >= 0.1f)
         {
-
             momentum();
             check_bounds();
             last_draw = seconds;
