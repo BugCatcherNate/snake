@@ -53,6 +53,26 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         currentDirection = DOWN;
     }
 }
+void check_bounds()
+{
+    if (snakePosition.x > 1.0)
+    {
+        snakePosition.x = -1.0;
+    }
+    else if (snakePosition.x < -1.0)
+    {
+        snakePosition.x = 1.0;
+    }
+
+    if (snakePosition.y > 1.0)
+    {
+        snakePosition.y = -1.0;
+    }
+    else if (snakePosition.y < -1.0)
+    {
+        snakePosition.y = 1.0;
+    }
+}
 
 void momentum()
 {
@@ -60,6 +80,7 @@ void momentum()
     {
         set_equal(&snakeMatrix[i], snakeMatrix[i - 1]);
     }
+
     if (currentDirection == LEFT)
     {
 
@@ -200,6 +221,7 @@ int main()
         {
 
             momentum();
+            check_bounds();
             last_draw = seconds;
         }
     }
