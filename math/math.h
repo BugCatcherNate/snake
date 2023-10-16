@@ -7,6 +7,10 @@ typedef struct Vec3 {
     float z;
 } vec3;
 
+typedef struct Vec4 {
+    float data[4];
+} vec4;
+
 typedef struct Mat4 {
     float data[16];
 } mat4;
