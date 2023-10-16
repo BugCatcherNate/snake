@@ -58,7 +58,7 @@ void momentum()
 {
     for (int i = pieces; i > 0; i--)
     {
-        set_equal(snakeMatrix[i], snakeMatrix[i - 1]);
+        set_equal(&snakeMatrix[i], snakeMatrix[i - 1]);
     }
     if (currentDirection == LEFT)
     {
@@ -78,7 +78,7 @@ void momentum()
         snakePosition.y += -0.025f;
     }
 
-    mat4_translate(snakeMatrix[0], snakePosition);
+    mat4_translate(&snakeMatrix[0], snakePosition);
 }
 
 int main()
@@ -163,8 +163,8 @@ int main()
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     for (int i = 0; i < pieces; i++)
     {
-        mat4_identity(snakeMatrix[i]);
-        mat4_scale(snakeMatrix[i], 0.01f);
+        mat4_identity(&snakeMatrix[i]);
+        mat4_scale(&snakeMatrix[i], 0.01f);
     }
     // Get the location of the model matrix uniform from the shader
 
