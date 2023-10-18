@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "utils.h"
+#include <time.h>
 
 const char *loadFile(const char *filename)
 {
@@ -36,5 +37,7 @@ const char *loadFile(const char *filename)
 }
 
 float randomFloat(float min, float max) {
+    time_t t;
+    srand((unsigned) time(&t));
     return ((float)rand() / RAND_MAX) * (max - min) + min;
 }
