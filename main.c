@@ -11,9 +11,9 @@ GLuint shaderProgram;
 mat4 foodMatrix;
 vec3 food_position;
 vec3 snakePosition;
-int pieces = 4;
-mat4 snakeMatrix[4];
-
+int pieces = 1;
+DynamicArray snakeMatrix;
+int add_piece = 0;
 
 enum Direction
 {
@@ -30,6 +30,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
+
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
@@ -55,6 +56,11 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     {
         currentDirection = DOWN;
     }
+    else if (key == GLFW_KEY_Q && action == GLFW_PRESS)
+    {
+        add_piece = 1;
+
+    }
 }
 void check_bounds()
 {
@@ -79,9 +85,11 @@ void check_bounds()
 
 void momentum()
 {
-    for (int i = pieces; i > 0; i--)
+    printf("%d\n", snakeMatrix.capacity);
+    for (size_t i = snakeMatrix.size; i > 0; i--)
     {
-        set_equal(&snakeMatrix[i], snakeMatrix[i - 1]);
+
+        set_equal(&snakeMatrix.data[i], &snakeMatrix.data[i - (size_t)1]);
     }
 
     if (currentDirection == LEFT)
@@ -102,12 +110,19 @@ void momentum()
         snakePosition.y += -0.025f;
     }
 
-    mat4_translate(&snakeMatrix[0], snakePosition);
+    mat4_translate(&snakeMatrix.data[0], snakePosition);
+ if(add_piece == 1) 
+    {
+    mat4 another;
+    pushBack(&snakeMatrix, another);
+    add_piece = 0;
+    };
 }
 
 int main()
 {
 
+initDynamicArray(&snakeMatrix, 5);
     if (!glfwInit())
     {
         return -1;
@@ -185,10 +200,12 @@ int main()
     free((void *)vertexShaderSource);
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    for (int i = 0; i < pieces; i++)
+    for (size_t i = 0; i < pieces; i++)
     {
-        mat4_identity(&snakeMatrix[i]);
-        mat4_scale(&snakeMatrix[i], 0.01f);
+        mat4 element;
+        pushBack(&snakeMatrix, element);
+        mat4_identity(&snakeMatrix.data[i]);
+        mat4_scale(&snakeMatrix.data[i], 0.01f);
     }
 
     double last_draw = 0;
@@ -203,7 +220,7 @@ int main()
     glfwSetKeyCallback(window, key_callback);
     while (!glfwWindowShouldClose(window))
     {
-
+   
         double seconds = glfwGetTime();
 
         glClear(GL_COLOR_BUFFER_BIT);
@@ -212,9 +229,9 @@ int main()
         GLint modelLoc = glGetUniformLocation(shaderProgram, "model");
 
         // Draw Snake
-        for (int i = 0; i < pieces; i++)
+        for (size_t i = 0; i < snakeMatrix.size; i++)
         {
-            glUniformMatrix4fv(modelLoc, 1, GL_TRUE, snakeMatrix[i].data);
+            glUniformMatrix4fv(modelLoc, 1, GL_TRUE, &snakeMatrix.data[i]);
             glBindVertexArray(VAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         };
