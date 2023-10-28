@@ -16,12 +16,11 @@ void mat4_scale(mat4 *matrix, float scale)
     matrix->data[10] *= scale;
 }
 
-void set_equal(mat4 *matrixA, const mat4 *matrixB)
+void set_equal(mat4 *matrixA, mat4 matrixB)
 {
-
     for (int i = 0; i < 16; i++)
     {
-        matrixA->data[i] = matrixB->data[i];
+        matrixA->data[i] = matrixB.data[i];
     }
 }
 

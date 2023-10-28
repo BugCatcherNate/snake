@@ -1,6 +1,6 @@
 #ifndef UTILS_H
 #define UTILS_H
-#include "math/math.h"
+#include "../math/math.h"
 
 typedef struct {
     mat4 *data;

@@ -4,16 +4,15 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include "math/math.h"
-#include "utils.h"
+#include "utils/utils.h"
 
 GLuint shaderProgram;
 
 mat4 foodMatrix;
 vec3 food_position;
 vec3 snakePosition;
-int pieces = 1;
 DynamicArray snakeMatrix;
-int add_piece = 0;
+int growSnake = 0;
 
 enum Direction
 {
@@ -30,7 +29,6 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
-
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
@@ -56,10 +54,10 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     {
         currentDirection = DOWN;
     }
-    else if (key == GLFW_KEY_Q && action == GLFW_PRESS)
+    else if (key == GLFW_KEY_Q && action == GLFW_PRESS && growSnake == 0)
     {
-        add_piece = 1;
 
+        growSnake = 1;
     }
 }
 void check_bounds()
@@ -85,13 +83,12 @@ void check_bounds()
 
 void momentum()
 {
-    printf("%d\n", snakeMatrix.capacity);
-    for (size_t i = snakeMatrix.size; i > 0; i--)
+
+    for (size_t i = snakeMatrix.size - 1; i > 0; i--)
     {
 
-        set_equal(&snakeMatrix.data[i], &snakeMatrix.data[i - (size_t)1]);
+        set_equal(&snakeMatrix.data[i], snakeMatrix.data[i - (size_t)1]);
     }
-
     if (currentDirection == LEFT)
     {
 
@@ -111,18 +108,11 @@ void momentum()
     }
 
     mat4_translate(&snakeMatrix.data[0], snakePosition);
- if(add_piece == 1) 
-    {
-    mat4 another;
-    pushBack(&snakeMatrix, another);
-    add_piece = 0;
-    };
 }
 
 int main()
 {
-
-initDynamicArray(&snakeMatrix, 5);
+    initDynamicArray(&snakeMatrix, 5);
     if (!glfwInit())
     {
         return -1;
@@ -177,8 +167,8 @@ initDynamicArray(&snakeMatrix, 5);
     glEnableVertexAttribArray(0);
 
     // Load Shader Files
-    const char *fragmentShaderSource = loadFile("frag_shader.glsl");
-    const char *vertexShaderSource = loadFile("vert_shader.glsl");
+    const char *fragmentShaderSource = loadFile("shaders/frag_shader.glsl");
+    const char *vertexShaderSource = loadFile("shaders/vert_shader.glsl");
     // Create vertex shader
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
@@ -200,13 +190,10 @@ initDynamicArray(&snakeMatrix, 5);
     free((void *)vertexShaderSource);
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    for (size_t i = 0; i < pieces; i++)
-    {
-        mat4 element;
-        pushBack(&snakeMatrix, element);
-        mat4_identity(&snakeMatrix.data[i]);
-        mat4_scale(&snakeMatrix.data[i], 0.01f);
-    }
+    mat4 snake_head;
+    pushBack(&snakeMatrix, snake_head);
+    mat4_identity(&snakeMatrix.data[0]);
+    mat4_scale(&snakeMatrix.data[0], 0.01f);
 
     double last_draw = 0;
     food_position.x = randomFloat(-1.0, 1.0);
@@ -220,7 +207,7 @@ initDynamicArray(&snakeMatrix, 5);
     glfwSetKeyCallback(window, key_callback);
     while (!glfwWindowShouldClose(window))
     {
-   
+
         double seconds = glfwGetTime();
 
         glClear(GL_COLOR_BUFFER_BIT);
@@ -245,6 +232,15 @@ initDynamicArray(&snakeMatrix, 5);
 
         if (seconds - last_draw >= 0.1f)
         {
+            if (growSnake == 1)
+            {
+
+                mat4 another;
+                mat4_identity(&another);
+                mat4_scale(&another, 0.01f);
+                pushBack(&snakeMatrix, another);
+                growSnake = 0;
+            }
             momentum();
             check_bounds();
             last_draw = seconds;
@@ -254,6 +250,8 @@ initDynamicArray(&snakeMatrix, 5);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
     glfwTerminate();
+
+    freeDynamicArray(&snakeMatrix);
 
     return 0;
 }
