@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "utils.h"
 #include <time.h>
 
@@ -34,6 +35,16 @@ const char *loadFile(const char *filename)
 
     fclose(file);
     return file_content; // Return the file content as a string
+}
+
+float clipToNearestIncrement(float value, float increment)
+{
+    return roundf(value / increment) * increment;
+}
+
+int areFloatsEqual(float a, float b, float tolerance)
+{
+    return fabs(a - b) < tolerance;
 }
 
 float randomFloat(float min, float max)

@@ -54,11 +54,6 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     {
         currentDirection = DOWN;
     }
-    else if (key == GLFW_KEY_Q && action == GLFW_PRESS && growSnake == 0)
-    {
-
-        growSnake = 1;
-    }
 }
 void check_bounds()
 {
@@ -84,6 +79,15 @@ void check_bounds()
 void momentum()
 {
 
+    if (areFloatsEqual(snakePosition.x, food_position.x, 0.00001) && areFloatsEqual(snakePosition.y, food_position.y, 0.00001))
+    {
+
+        growSnake = 1;
+        food_position.x = clipToNearestIncrement(randomFloat(-1.0, 1.0), 0.025);
+        food_position.y = clipToNearestIncrement(randomFloat(-1.0, 1.0), 0.025);
+
+        mat4_translate(&foodMatrix, food_position);
+    }
     for (size_t i = snakeMatrix.size - 1; i > 0; i--)
     {
 
@@ -196,8 +200,8 @@ int main()
     mat4_scale(&snakeMatrix.data[0], 0.01f);
 
     double last_draw = 0;
-    food_position.x = randomFloat(-1.0, 1.0);
-    food_position.y = randomFloat(-1.0, 1.0);
+    food_position.x = clipToNearestIncrement(randomFloat(-1.0, 1.0), 0.025);
+    food_position.y = clipToNearestIncrement(randomFloat(-1.0, 1.0), 0.025);
     food_position.z = 0.0;
 
     mat4_identity(&foodMatrix);
