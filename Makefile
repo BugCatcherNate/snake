@@ -3,7 +3,7 @@ CFLAGS = -Wall -Wextra -pedantic -std=c99
 LDFLAGS = -lglfw -lGL -lGLEW -lm
 
 TARGET = snake
-SRCS = main.c utils/utils.c math/math.c
+SRCS = main.c utils/utils.c math/math.c utils/logger.c
 BIN_DIR = bin
 
 all: $(BIN_DIR)/$(TARGET)

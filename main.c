@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include "math/math.h"
 #include "utils/utils.h"
+#include "utils/logger.h"
 
 GLuint shaderProgram;
 
@@ -34,6 +35,7 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     {
+        log("PRESSED LEFT\n");
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
     if (key == GLFW_KEY_D && action == GLFW_PRESS && currentDirection != LEFT)
