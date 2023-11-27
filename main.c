@@ -35,7 +35,6 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     {
-        log("PRESSED LEFT\n");
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
     if (key == GLFW_KEY_D && action == GLFW_PRESS && currentDirection != LEFT)
@@ -118,6 +117,7 @@ void momentum()
 
 int main()
 {
+    info("application started");
     initDynamicArray(&snakeMatrix, 5);
     if (!glfwInit())
     {
@@ -211,6 +211,7 @@ int main()
     mat4_translate(&foodMatrix, food_position);
 
     glfwSetKeyCallback(window, key_callback);
+    
     while (!glfwWindowShouldClose(window))
     {
 
@@ -238,9 +239,10 @@ int main()
 
         if (seconds - last_draw >= 0.1f)
         {
+
             if (growSnake == 1)
             {
-
+                debug("Got Food");
                 mat4 another;
                 mat4_identity(&another);
                 mat4_scale(&another, 0.01f);
