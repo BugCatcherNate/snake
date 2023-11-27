@@ -35,24 +35,29 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     {
+
+        debug("escape pressed");
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
     if (key == GLFW_KEY_D && action == GLFW_PRESS && currentDirection != LEFT)
     {
-
+        debug("right pressed");
         currentDirection = RIGHT;
     }
     else if (key == GLFW_KEY_A && action == GLFW_PRESS && currentDirection != RIGHT)
     {
+
+        debug("left pressed");
         currentDirection = LEFT;
     }
     else if (key == GLFW_KEY_W && action == GLFW_PRESS && currentDirection != DOWN)
     {
-
+        debug("up pressed");
         currentDirection = UP;
     }
     else if (key == GLFW_KEY_S && action == GLFW_PRESS && currentDirection != UP)
     {
+        debug("down pressed");
         currentDirection = DOWN;
     }
 }
@@ -77,7 +82,7 @@ void check_bounds()
     }
 }
 
-void momentum()
+void momentum(GLFWwindow *window)
 {
 
     if (areFloatsEqual(snakePosition.x, food_position.x, 0.00001) && areFloatsEqual(snakePosition.y, food_position.y, 0.00001))
@@ -89,9 +94,15 @@ void momentum()
 
         mat4_translate(&foodMatrix, food_position);
     }
+
     for (size_t i = snakeMatrix.size - 1; i > 0; i--)
     {
 
+    if (areFloatsEqual(snakePosition.x, snakeMatrix.data[i].data[3], 0.00001) && areFloatsEqual(snakePosition.y, snakeMatrix.data[i].data[7], 0.00001)){
+
+    glfwSetWindowShouldClose(window, GLFW_TRUE);
+    info("COLLISION");
+    }
         set_equal(&snakeMatrix.data[i], snakeMatrix.data[i - (size_t)1]);
     }
     if (currentDirection == LEFT)
@@ -242,14 +253,14 @@ int main()
 
             if (growSnake == 1)
             {
-                debug("Got Food");
+                debug("food colision");
                 mat4 another;
                 mat4_identity(&another);
                 mat4_scale(&another, 0.01f);
                 pushBack(&snakeMatrix, another);
                 growSnake = 0;
             }
-            momentum();
+            momentum(window);
             check_bounds();
             last_draw = seconds;
         }
