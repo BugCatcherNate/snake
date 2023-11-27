@@ -7,21 +7,30 @@
 #define ANSI_COLOR_BLUE    "\x1b[34m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
+char* get_time() {
+
+    time_t currentTime;
+    time(&currentTime);
+
+    static char timeString[50]; // Adjust the size based on your needs
+    struct tm *timeInfo;
+
+    timeInfo = localtime(&currentTime);
+
+    strftime(timeString, sizeof(timeString), "%Y-%m-%d %H:%M:%S", timeInfo);
+
+    return timeString;
+}
 
 
 void info(const char *message) {
-time_t currentTime;
-    time(&currentTime);
 
-    printf("%s[INFO]%s:%s%s\n", ANSI_COLOR_GREEN, ctime(&currentTime), message, ANSI_COLOR_RESET); 
+    printf("%s[INFO]%s::%s%s\n", ANSI_COLOR_GREEN, get_time(), message, ANSI_COLOR_RESET); 
 
 }
 
 void debug(const char *message) {
-    time_t currentTime;
-    time(&currentTime);
 
-
-    printf("%s[DEBUG]%s:%s%s\n", ANSI_COLOR_YELLOW, ctime(&currentTime), message, ANSI_COLOR_RESET); 
+    printf("%s[DEBUG]%s::%s%s\n", ANSI_COLOR_YELLOW, get_time(), message, ANSI_COLOR_RESET); 
 
 }

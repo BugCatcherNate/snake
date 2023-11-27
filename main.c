@@ -117,7 +117,7 @@ void momentum()
 
 int main()
 {
-    info("application started");
+    info("Application Started");
     initDynamicArray(&snakeMatrix, 5);
     if (!glfwInit())
     {
@@ -260,6 +260,6 @@ int main()
     glfwTerminate();
 
     freeDynamicArray(&snakeMatrix);
-
+    info("Application Ended");
     return 0;
 }
