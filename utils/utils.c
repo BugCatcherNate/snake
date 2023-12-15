@@ -3,6 +3,9 @@
 #include <math.h>
 #include "utils.h"
 #include <time.h>
+#include <stdbool.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 const char *loadFile(const char *filename)
 {
@@ -35,6 +38,29 @@ const char *loadFile(const char *filename)
 
     fclose(file);
     return file_content; // Return the file content as a string
+}
+
+
+ImageData* load_image(const char *path){
+
+    ImageData* newImage = (ImageData*)malloc(sizeof(ImageData));
+
+    int width, height, nrChannels;
+    stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+    unsigned char *data = stbi_load(path, &width, &height, &nrChannels, 0);
+
+    if (newImage != NULL){
+
+        newImage->data = data;
+        newImage->height = height;
+        newImage->width = width;
+        newImage->nrChannels;
+    }
+    debug("Loaded Image");
+
+    return newImage;
+
+ 
 }
 
 float clipToNearestIncrement(float value, float increment)

@@ -128,7 +128,9 @@ void momentum(GLFWwindow *window)
 
 int main()
 {
+
     info("Application Started");
+    ImageData* container_image = load_image("resources/textures/container.jpg");
     initDynamicArray(&snakeMatrix, 5);
     if (!glfwInit())
     {
@@ -183,6 +185,21 @@ int main()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
 
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, container_image->width, container_image->height, 0, GL_RGB, GL_UNSIGNED_BYTE, container_image->data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    // Textures
+    unsigned int texture1;
+    // texture 1
+    // ---------
+    glGenTextures(1, &texture1);
+    glBindTexture(GL_TEXTURE_2D, texture1); 
+     // set the texture wrapping parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // set texture filtering parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     // Load Shader Files
     const char *fragmentShaderSource = loadFile("shaders/frag_shader.glsl");
     const char *vertexShaderSource = loadFile("shaders/vert_shader.glsl");
