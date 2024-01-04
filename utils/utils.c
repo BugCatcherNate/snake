@@ -54,9 +54,12 @@ ImageData* load_image(const char *path){
         newImage->data = data;
         newImage->height = height;
         newImage->width = width;
-        newImage->nrChannels;
-    }
+        newImage->nrChannels = nrChannels;
+
     debug("Loaded Image");
+    }else{
+    error("Image Load Failed");
+    }
 
     return newImage;
 

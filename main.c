@@ -82,6 +82,18 @@ void check_bounds()
     }
 }
 
+void checkShaderCompilation(GLuint shader, const char *shaderType)
+{
+    GLint success;
+    GLchar infoLog[512];
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(shader, 512, NULL, infoLog);
+        fprintf(stderr, "Error: %s shader compilation failed\n%s\n", shaderType, infoLog);
+    }
+}
+
 void momentum(GLFWwindow *window)
 {
 
@@ -182,11 +194,13 @@ int main()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // Set vertex attribute pointers
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, container_image->width, container_image->height, 0, GL_RGB, GL_UNSIGNED_BYTE, container_image->data);
-    glGenerateMipmap(GL_TEXTURE_2D);
+    // Set texture attribute pointers;
+    //
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3* sizeof(float)));
+    glEnableVertexAttribArray(1);
+ 
 
     // Textures
     unsigned int texture1;
@@ -198,8 +212,10 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     // set texture filtering parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, container_image->width, container_image->height, 0, GL_RGB, GL_UNSIGNED_BYTE, container_image->data);
+    glGenerateMipmap(GL_TEXTURE_2D);
     // Load Shader Files
     const char *fragmentShaderSource = loadFile("shaders/frag_shader.glsl");
     const char *vertexShaderSource = loadFile("shaders/vert_shader.glsl");
@@ -207,11 +223,13 @@ int main()
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
     glCompileShader(vertexShader);
+    checkShaderCompilation(vertexShader, "Vertex");
 
     // Create fragment shader
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
     glCompileShader(fragmentShader);
+    checkShaderCompilation(fragmentShader, "Fragment");
 
     // Create shader program
     shaderProgram = glCreateProgram();
@@ -235,30 +253,35 @@ int main()
     food_position.z = 0.0;
 
     mat4_identity(&foodMatrix);
-    mat4_scale(&foodMatrix, 0.01f);
+    mat4_scale(&foodMatrix, 0.1f);
     mat4_translate(&foodMatrix, food_position);
 
     glfwSetKeyCallback(window, key_callback);
     
+            glUseProgram(shaderProgram);
+        glUniform1i(glGetUniformLocation(shaderProgram, "ourTexture"),0); 
+
     while (!glfwWindowShouldClose(window))
     {
 
         double seconds = glfwGetTime();
 
         glClear(GL_COLOR_BUFFER_BIT);
-
-        glUseProgram(shaderProgram);
         GLint modelLoc = glGetUniformLocation(shaderProgram, "model");
 
         // Draw Snake
         for (size_t i = 0; i < snakeMatrix.size; i++)
         {
             glUniformMatrix4fv(modelLoc, 1, GL_TRUE, &snakeMatrix.data[i]);
+
+        glBindTexture(GL_TEXTURE_2D, texture1);
+
             glBindVertexArray(VAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         };
         // Draw Food
         glUniformMatrix4fv(modelLoc, 1, GL_TRUE, foodMatrix.data);
+        glBindTexture(GL_TEXTURE_2D, texture1);
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
