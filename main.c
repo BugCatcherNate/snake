@@ -166,10 +166,10 @@ int main()
     }
 
     float vertices[] = {
-        1.0f, 1.0f, 0.0f,   // top right
-        1.0f, -1.0f, 0.0f,  // bottom right
-        -1.0f, -1.0f, 0.0f, // bottom left
-        -1.0f, 1.0f, 0.0f   // top left
+        1.0f, 1.0f, 0.0f, 1.0f, 1.0f,   // top right
+        1.0f, -1.0f, 0.0f, 1.0f, 0.0f,  // bottom right
+        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,// bottom left
+        -1.0f, 1.0f, 0.0f, 0.0f, 1.0f   // top left
     };
 
     unsigned int indices[] = {
@@ -203,11 +203,11 @@ int main()
  
 
     // Textures
-    unsigned int texture1;
+    unsigned int texture;
     // texture 1
     // ---------
-    glGenTextures(1, &texture1);
-    glBindTexture(GL_TEXTURE_2D, texture1); 
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture); 
      // set the texture wrapping parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -253,7 +253,7 @@ int main()
     food_position.z = 0.0;
 
     mat4_identity(&foodMatrix);
-    mat4_scale(&foodMatrix, 0.1f);
+    mat4_scale(&foodMatrix, 0.01f);
     mat4_translate(&foodMatrix, food_position);
 
     glfwSetKeyCallback(window, key_callback);
@@ -274,14 +274,14 @@ int main()
         {
             glUniformMatrix4fv(modelLoc, 1, GL_TRUE, &snakeMatrix.data[i]);
 
-        glBindTexture(GL_TEXTURE_2D, texture1);
+        glBindTexture(GL_TEXTURE_2D, texture);
 
             glBindVertexArray(VAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         };
         // Draw Food
         glUniformMatrix4fv(modelLoc, 1, GL_TRUE, foodMatrix.data);
-        glBindTexture(GL_TEXTURE_2D, texture1);
+        glBindTexture(GL_TEXTURE_2D, texture);
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
