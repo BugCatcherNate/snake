@@ -34,3 +34,9 @@ void debug(const char *message) {
     printf("%s[DEBUG]%s::%s%s\n", ANSI_COLOR_YELLOW, get_time(), message, ANSI_COLOR_RESET); 
 
 }
+
+void error(const char *message) {
+
+    printf("%s[ERROR]%s::%s%s\n", ANSI_COLOR_RED, get_time(), message, ANSI_COLOR_RESET); 
+
+}

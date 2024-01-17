@@ -3,5 +3,6 @@
 
 void info(const char *message);
 void debug(const char *message);
+void error(const char *message);
 char* get_time();
 #endif

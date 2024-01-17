@@ -6,8 +6,7 @@
 #include "math/math.h"
 #include "utils/utils.h"
 #include "utils/logger.h"
-
-GLuint shaderProgram;
+#include "utils/shader.h"
 
 mat4 foodMatrix;
 vec3 food_position;
@@ -61,6 +60,7 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         currentDirection = DOWN;
     }
 }
+
 void check_bounds()
 {
     if (snakePosition.x > 1.0)
@@ -82,18 +82,6 @@ void check_bounds()
     }
 }
 
-void checkShaderCompilation(GLuint shader, const char *shaderType)
-{
-    GLint success;
-    GLchar infoLog[512];
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(shader, 512, NULL, infoLog);
-        fprintf(stderr, "Error: %s shader compilation failed\n%s\n", shaderType, infoLog);
-    }
-}
-
 void momentum(GLFWwindow *window)
 {
 
@@ -110,11 +98,12 @@ void momentum(GLFWwindow *window)
     for (size_t i = snakeMatrix.size - 1; i > 0; i--)
     {
 
-    if (areFloatsEqual(snakePosition.x, snakeMatrix.data[i].data[3], 0.00001) && areFloatsEqual(snakePosition.y, snakeMatrix.data[i].data[7], 0.00001)){
+        if (areFloatsEqual(snakePosition.x, snakeMatrix.data[i].data[3], 0.00001) && areFloatsEqual(snakePosition.y, snakeMatrix.data[i].data[7], 0.00001))
+        {
 
-    glfwSetWindowShouldClose(window, GLFW_TRUE);
-    info("COLLISION");
-    }
+            glfwSetWindowShouldClose(window, GLFW_TRUE);
+            info("COLLISION");
+        }
         set_equal(&snakeMatrix.data[i], snakeMatrix.data[i - (size_t)1]);
     }
     if (currentDirection == LEFT)
@@ -142,7 +131,10 @@ int main()
 {
 
     info("Application Started");
-    ImageData* container_image = load_image("resources/textures/container.jpg");
+
+    
+    ImageData *container_image = load_image("resources/fonts/test.png");
+
     initDynamicArray(&snakeMatrix, 5);
     if (!glfwInit())
     {
@@ -166,9 +158,9 @@ int main()
     }
 
     float vertices[] = {
-        1.0f, 1.0f, 0.0f, 1.0f, 1.0f,   // top right
-        1.0f, -1.0f, 0.0f, 1.0f, 0.0f,  // bottom right
-        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,// bottom left
+        1.0f, 1.0f, 0.0f, 0.1f, 1.0f,   // top right
+        1.0f, -1.0f, 0.0f, 0.1f, 0.0f,  // bottom right
+        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom left
         -1.0f, 1.0f, 0.0f, 0.0f, 1.0f   // top left
     };
 
@@ -198,18 +190,17 @@ int main()
     glEnableVertexAttribArray(0);
     // Set texture attribute pointers;
     //
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3* sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
- 
 
     // Textures
     unsigned int texture;
     // texture 1
     // ---------
     glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture); 
-     // set the texture wrapping parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+    glBindTexture(GL_TEXTURE_2D, texture);
+    // set the texture wrapping parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     // set texture filtering parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -217,35 +208,14 @@ int main()
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, container_image->width, container_image->height, 0, GL_RGB, GL_UNSIGNED_BYTE, container_image->data);
     glGenerateMipmap(GL_TEXTURE_2D);
     // Load Shader Files
-    const char *fragmentShaderSource = loadFile("shaders/frag_shader.glsl");
-    const char *vertexShaderSource = loadFile("shaders/vert_shader.glsl");
-    // Create vertex shader
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-    checkShaderCompilation(vertexShader, "Vertex");
 
-    // Create fragment shader
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-    checkShaderCompilation(fragmentShader, "Fragment");
-
-    // Create shader program
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    // Cleanup shader sources
-    free((void *)fragmentShaderSource);
-    free((void *)vertexShaderSource);
-
+    shader myShader = compileShader("shaders/vert_shader.glsl", "shaders/frag_shader.glsl");
+    
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     mat4 snake_head;
     pushBack(&snakeMatrix, snake_head);
     mat4_identity(&snakeMatrix.data[0]);
-    mat4_scale(&snakeMatrix.data[0], 0.01f);
+    mat4_scale(&snakeMatrix.data[0], 0.50f);
 
     double last_draw = 0;
     food_position.x = clipToNearestIncrement(randomFloat(-1.0, 1.0), 0.025);
@@ -257,9 +227,9 @@ int main()
     mat4_translate(&foodMatrix, food_position);
 
     glfwSetKeyCallback(window, key_callback);
-    
-            glUseProgram(shaderProgram);
-        glUniform1i(glGetUniformLocation(shaderProgram, "ourTexture"),0); 
+
+    useShader(myShader);
+    glUniform1i(glGetUniformLocation(myShader.shaderProgram, "ourTexture"), 0);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -267,14 +237,14 @@ int main()
         double seconds = glfwGetTime();
 
         glClear(GL_COLOR_BUFFER_BIT);
-        GLint modelLoc = glGetUniformLocation(shaderProgram, "model");
+        GLint modelLoc = glGetUniformLocation(myShader.shaderProgram, "model");
 
         // Draw Snake
         for (size_t i = 0; i < snakeMatrix.size; i++)
         {
             glUniformMatrix4fv(modelLoc, 1, GL_TRUE, &snakeMatrix.data[i]);
 
-        glBindTexture(GL_TEXTURE_2D, texture);
+            glBindTexture(GL_TEXTURE_2D, texture);
 
             glBindVertexArray(VAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -284,7 +254,6 @@ int main()
         glBindTexture(GL_TEXTURE_2D, texture);
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
         glfwSwapBuffers(window);
         glfwPollEvents();
 
