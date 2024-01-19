@@ -226,15 +226,13 @@ int main()
             setUniformMat4(myShader, "model", snakeMatrix.data[i]);
             glBindTexture(GL_TEXTURE_2D, texture);
 
-            glBindVertexArray(mainObject.VAO);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            draw(mainObject);
         };
         // Draw Food
 
         setUniformMat4(myShader, "model", foodMatrix);
         glBindTexture(GL_TEXTURE_2D, texture);
-        glBindVertexArray(mainObject.VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        draw(mainObject);
         glfwSwapBuffers(window);
         glfwPollEvents();
 
@@ -255,9 +253,7 @@ int main()
             last_draw = seconds;
         }
     }
-    glDeleteVertexArrays(1, &mainObject.VAO);
-    glDeleteBuffers(1, &mainObject.VBO);
-    glDeleteBuffers(1, &mainObject.EBO);
+    cleanRenderObject(mainObject);
     glfwTerminate();
 
     freeDynamicArray(&snakeMatrix);

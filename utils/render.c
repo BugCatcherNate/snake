@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "render.h"
 #include "model.h"
+#include "logger.h"
 
 renderObject initRenderObject(model targetModel){
 
@@ -34,3 +35,19 @@ renderObject initRenderObject(model targetModel){
 }
 
 
+void draw(renderObject targetObject){
+
+    glBindVertexArray(targetObject.VAO);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}
+
+
+void cleanRenderObject(renderObject targetObject){
+
+    glDeleteVertexArrays(1, &targetObject.VAO);
+    glDeleteBuffers(1, &targetObject.VBO);
+    glDeleteBuffers(1, &targetObject.EBO);
+    info("Cleaned render object");
+
+}

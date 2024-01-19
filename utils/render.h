@@ -10,4 +10,8 @@ typedef struct {
 } renderObject;
 
 renderObject initRenderObject(model targetModel);
+
+void draw(renderObject targetObject);
+
+void cleanRenderObject(renderObject targetObject);
 #endif
