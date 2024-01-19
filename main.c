@@ -229,7 +229,7 @@ int main()
     glfwSetKeyCallback(window, key_callback);
 
     useShader(myShader);
-    glUniform1i(glGetUniformLocation(myShader.shaderProgram, "ourTexture"), 0);
+    setUniformLi(myShader, "ourTexture", 0);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -237,20 +237,23 @@ int main()
         double seconds = glfwGetTime();
 
         glClear(GL_COLOR_BUFFER_BIT);
-        GLint modelLoc = glGetUniformLocation(myShader.shaderProgram, "model");
+       // GLint modelLoc = glGetUniformLocation(myShader.shaderProgram, "model");
 
         // Draw Snake
         for (size_t i = 0; i < snakeMatrix.size; i++)
         {
-            glUniformMatrix4fv(modelLoc, 1, GL_TRUE, &snakeMatrix.data[i]);
+        //    glUniformMatrix4fv(modelLoc, 1, GL_TRUE, &snakeMatrix.data[i]);
 
+            setUniformMat4(myShader, "model", snakeMatrix.data[i]);
             glBindTexture(GL_TEXTURE_2D, texture);
 
             glBindVertexArray(VAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         };
         // Draw Food
-        glUniformMatrix4fv(modelLoc, 1, GL_TRUE, foodMatrix.data);
+
+        setUniformMat4(myShader, "model", foodMatrix);
+        //glUniformMatrix4fv(modelLoc, 1, GL_TRUE, foodMatrix.data);
         glBindTexture(GL_TEXTURE_2D, texture);
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

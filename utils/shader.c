@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 #include <stdio.h>
 #include "utils.h"
+#include "logger.h"
 #include "shader.h"
 
 void checkShaderCompilation(GLuint shader, const char *shaderType)
@@ -15,10 +16,10 @@ void checkShaderCompilation(GLuint shader, const char *shaderType)
     }
 }
 
-shader compileShader(char *vertexSource, char *fragmentSource) 
+shader compileShader(char *vertexSource, char *fragmentSource)
 {
     shader targetShader;
-   // Load Shader Files
+    // Load Shader Files
     const char *fragmentShaderSource = loadFile(fragmentSource);
     const char *vertexShaderSource = loadFile(vertexSource);
     // Create vertex shader
@@ -42,10 +43,24 @@ shader compileShader(char *vertexSource, char *fragmentSource)
     // Cleanup shader sources
     free((void *)fragmentShaderSource);
     free((void *)vertexShaderSource);
-
+    info("Shader compiled");
     return targetShader;
 }
 
-void useShader(shader s){
+void useShader(shader s)
+{
     glUseProgram(s.shaderProgram);
+}
+
+void setUniformLi(shader s, char *uniformName, GLint value)
+{
+
+    glUniform1i(glGetUniformLocation(s.shaderProgram, uniformName), value);
+}
+
+void setUniformMat4(shader s, char *uniformName, mat4 value)
+{
+
+    glUniformMatrix4fv(glGetUniformLocation(s.shaderProgram, uniformName), 1, GL_TRUE, value.data);
+
 }
