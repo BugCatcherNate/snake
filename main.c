@@ -4,15 +4,18 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include "math/math.h"
+#include "utils/model.h"
 #include "utils/utils.h"
 #include "utils/logger.h"
 #include "utils/shader.h"
+#include "utils/render.h"
 
 mat4 foodMatrix;
 vec3 food_position;
 vec3 snakePosition;
 DynamicArray snakeMatrix;
 int growSnake = 0;
+model mainModel;
 
 enum Direction
 {
@@ -132,7 +135,6 @@ int main()
 
     info("Application Started");
 
-    
     ImageData *container_image = load_image("resources/fonts/test.png");
 
     initDynamicArray(&snakeMatrix, 5);
@@ -157,41 +159,20 @@ int main()
         return -1;
     }
 
-    float vertices[] = {
+
+    model mainModel = {{
         1.0f, 1.0f, 0.0f, 0.1f, 1.0f,   // top right
         1.0f, -1.0f, 0.0f, 0.1f, 0.0f,  // bottom right
         -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom left
         -1.0f, 1.0f, 0.0f, 0.0f, 1.0f   // top left
-    };
-
-    unsigned int indices[] = {
+    }, 
+    {
         0, 1, 3, // first triangle
         1, 2, 3  // second triangle
+    }
     };
 
-    unsigned int VBO, VAO, EBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-
-    // Bind VAO
-    glBindVertexArray(VAO);
-
-    // Bind VBO and set vertex data
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // Bind EBO and set element data
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    // Set vertex attribute pointers
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
-    glEnableVertexAttribArray(0);
-    // Set texture attribute pointers;
-    //
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
+    renderObject mainObject = initRenderObject(mainModel);
 
     // Textures
     unsigned int texture;
@@ -210,7 +191,7 @@ int main()
     // Load Shader Files
 
     shader myShader = compileShader("shaders/vert_shader.glsl", "shaders/frag_shader.glsl");
-    
+
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     mat4 snake_head;
     pushBack(&snakeMatrix, snake_head);
@@ -237,25 +218,22 @@ int main()
         double seconds = glfwGetTime();
 
         glClear(GL_COLOR_BUFFER_BIT);
-       // GLint modelLoc = glGetUniformLocation(myShader.shaderProgram, "model");
 
         // Draw Snake
         for (size_t i = 0; i < snakeMatrix.size; i++)
         {
-        //    glUniformMatrix4fv(modelLoc, 1, GL_TRUE, &snakeMatrix.data[i]);
 
             setUniformMat4(myShader, "model", snakeMatrix.data[i]);
             glBindTexture(GL_TEXTURE_2D, texture);
 
-            glBindVertexArray(VAO);
+            glBindVertexArray(mainObject.VAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         };
         // Draw Food
 
         setUniformMat4(myShader, "model", foodMatrix);
-        //glUniformMatrix4fv(modelLoc, 1, GL_TRUE, foodMatrix.data);
         glBindTexture(GL_TEXTURE_2D, texture);
-        glBindVertexArray(VAO);
+        glBindVertexArray(mainObject.VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -277,9 +255,9 @@ int main()
             last_draw = seconds;
         }
     }
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+    glDeleteVertexArrays(1, &mainObject.VAO);
+    glDeleteBuffers(1, &mainObject.VBO);
+    glDeleteBuffers(1, &mainObject.EBO);
     glfwTerminate();
 
     freeDynamicArray(&snakeMatrix);
