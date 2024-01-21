@@ -11,7 +11,7 @@ include_directories(includes)
 file(COPY resources/ DESTINATION ${CMAKE_BINARY_DIR}/bin/resources)
 file(COPY shaders/ DESTINATION ${CMAKE_BINARY_DIR}/bin/shaders)
 
-set(SOURCES main.c utils/utils.c math/math.c utils/logger.c utils/shader.c utils/model.c utils/render.c)
+set(SOURCES main.c utils/utils.c math/math.c utils/logger.c graphics/shader.c graphics/model.c graphics/render.c)
 
 add_executable(snake ${SOURCES})
 

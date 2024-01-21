@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "render.h"
 #include "model.h"
-#include "logger.h"
+#include "../utils/logger.h"
 
 renderObject initRenderObject(model targetModel){
 

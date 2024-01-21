@@ -3,12 +3,12 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include "math/math.h"
-#include "utils/model.h"
+#include "graphics/model.h"
+#include "graphics/shader.h"
+#include "graphics/render.h"
 #include "utils/utils.h"
 #include "utils/logger.h"
-#include "utils/shader.h"
-#include "utils/render.h"
+#include "math/math.h"
 
 mat4 foodMatrix;
 vec3 food_position;

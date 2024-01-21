@@ -1,7 +1,7 @@
 #include <GL/glew.h>
 #include <stdio.h>
-#include "utils.h"
-#include "logger.h"
+#include "../utils/utils.h"
+#include "../utils/logger.h"
 #include "shader.h"
 
 void checkShaderCompilation(GLuint shader, const char *shaderType)
