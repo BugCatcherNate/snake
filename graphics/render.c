@@ -3,6 +3,7 @@
 #include "render.h"
 #include "model.h"
 #include "../utils/logger.h"
+#include "../utils/utils.h"
 
 renderObject initRenderObject(model targetModel){
 
@@ -34,6 +35,34 @@ renderObject initRenderObject(model targetModel){
     return ro;
 }
 
+textureObject initTextureObject(const char *path){
+
+    textureObject to;
+
+    // Textures
+    unsigned int texture;
+    to.id = texture;
+    ImageData *texture_image = load_image(path);
+    // texture 1
+    // ---------
+    glGenTextures(1, &to.id);
+    glBindTexture(GL_TEXTURE_2D, to.id);
+    // set the texture wrapping parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // set texture filtering parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture_image->width, texture_image->height, 0, GL_RGB, GL_UNSIGNED_BYTE, texture_image->data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    return to;
+}
+
+void useTexture(textureObject targetTextureObject){
+
+    glBindTexture(GL_TEXTURE_2D, targetTextureObject.id);
+};
 
 void draw(renderObject targetObject){
 

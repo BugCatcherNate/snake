@@ -9,6 +9,15 @@ typedef struct {
     
 } renderObject;
 
+typedef struct {
+
+    unsigned int id;
+    
+} textureObject;
+
+
+textureObject initTextureObject(const char *path);
+void useTexture(textureObject targetTextureObject);
 renderObject initRenderObject(model targetModel);
 
 void draw(renderObject targetObject);

@@ -135,7 +135,6 @@ int main()
 
     info("Application Started");
 
-    ImageData *container_image = load_image("resources/fonts/test.png");
 
     initDynamicArray(&snakeMatrix, 5);
     if (!glfwInit())
@@ -161,8 +160,8 @@ int main()
 
 
     model mainModel = {{
-        1.0f, 1.0f, 0.0f, 0.1f, 1.0f,   // top right
-        1.0f, -1.0f, 0.0f, 0.1f, 0.0f,  // bottom right
+        1.0f, 1.0f, 0.0f, 1.0f, 1.0f,   // top right
+        1.0f, -1.0f, 0.0f, 1.0f, 0.0f,  // bottom right
         -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom left
         -1.0f, 1.0f, 0.0f, 0.0f, 1.0f   // top left
     }, 
@@ -174,21 +173,7 @@ int main()
 
     renderObject mainObject = initRenderObject(mainModel);
 
-    // Textures
-    unsigned int texture;
-    // texture 1
-    // ---------
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    // set the texture wrapping parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    // set texture filtering parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, container_image->width, container_image->height, 0, GL_RGB, GL_UNSIGNED_BYTE, container_image->data);
-    glGenerateMipmap(GL_TEXTURE_2D);
-    // Load Shader Files
+    textureObject mainTextureObject = initTextureObject("resources/textures/happy_face.jpg");
 
     shader myShader = compileShader("shaders/vert_shader.glsl", "shaders/frag_shader.glsl");
 
@@ -224,14 +209,14 @@ int main()
         {
 
             setUniformMat4(myShader, "model", snakeMatrix.data[i]);
-            glBindTexture(GL_TEXTURE_2D, texture);
-
+            useTexture(mainTextureObject);
             draw(mainObject);
+
         };
         // Draw Food
-
         setUniformMat4(myShader, "model", foodMatrix);
-        glBindTexture(GL_TEXTURE_2D, texture);
+
+        useTexture(mainTextureObject);
         draw(mainObject);
         glfwSwapBuffers(window);
         glfwPollEvents();
