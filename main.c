@@ -196,7 +196,7 @@ int main()
     mat4 snake_head;
     pushBack(&snakeMatrix, snake_head);
     mat4_identity(&snakeMatrix.data[0]);
-    mat4_scale(&snakeMatrix.data[0], 0.50f);
+    mat4_scale(&snakeMatrix.data[0], 0.01f);
 
     double last_draw = 0;
     food_position.x = clipToNearestIncrement(randomFloat(-1.0, 1.0), 0.025);
