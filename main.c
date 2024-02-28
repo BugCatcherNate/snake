@@ -9,6 +9,9 @@
 #include "utils/utils.h"
 #include "utils/logger.h"
 #include "math/math.h"
+#include "ft2build.h"
+#include FT_FREETYPE_H
+
 
 mat4 foodMatrix;
 vec3 food_position;
@@ -135,6 +138,30 @@ int main()
 
     info("Application Started");
 
+    FT_Library ft;
+    if (FT_Init_FreeType(&ft))
+    {
+        error("Could not load Freetype");
+        return -1;
+    }
+
+    FT_Face face;
+    if (FT_New_Face(ft, "resources/fonts/DroidSansFallbackFull.ttf", 0, &face)){
+        error("Failed to load font");
+        return -1;
+    }
+
+    FT_Set_Pixel_Sizes(face, 0, 48);
+    if (FT_Load_Char(face, 'X', FT_LOAD_RENDER))
+    {
+        error("Failed to load glyph");
+        return -1;
+    }
+    
+
+    char snum[5];
+    sprintf(snum, "%i", face->glyph->bitmap.width);
+    info(snum);
 
     initDynamicArray(&snakeMatrix, 5);
     if (!glfwInit())
@@ -181,7 +208,7 @@ int main()
     mat4 snake_head;
     pushBack(&snakeMatrix, snake_head);
     mat4_identity(&snakeMatrix.data[0]);
-    mat4_scale(&snakeMatrix.data[0], 0.01f);
+    mat4_scale(&snakeMatrix.data[0], 0.05f);
 
     double last_draw = 0;
     food_position.x = clipToNearestIncrement(randomFloat(-1.0, 1.0), 0.025);
@@ -189,7 +216,7 @@ int main()
     food_position.z = 0.0;
 
     mat4_identity(&foodMatrix);
-    mat4_scale(&foodMatrix, 0.01f);
+    mat4_scale(&foodMatrix, 0.05f);
     mat4_translate(&foodMatrix, food_position);
 
     glfwSetKeyCallback(window, key_callback);
@@ -229,7 +256,7 @@ int main()
                 debug("food colision");
                 mat4 another;
                 mat4_identity(&another);
-                mat4_scale(&another, 0.01f);
+                mat4_scale(&another, 0.05f);
                 pushBack(&snakeMatrix, another);
                 growSnake = 0;
             }
