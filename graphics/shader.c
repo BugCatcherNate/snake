@@ -58,6 +58,12 @@ void setUniformLi(shader s, char *uniformName, GLint value)
     glUniform1i(glGetUniformLocation(s.shaderProgram, uniformName), value);
 }
 
+void setUniform3f(shader s, char *uniformName, GLfloat x, GLfloat y, GLfloat z)
+{
+
+    glUniform3f(glGetUniformLocation(s.shaderProgram, uniformName), x, y, z);
+}
+
 void setUniformMat4(shader s, char *uniformName, mat4 value)
 {
 

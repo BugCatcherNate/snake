@@ -8,10 +8,8 @@
 #include "graphics/render.h"
 #include "utils/utils.h"
 #include "utils/logger.h"
+#include "utils/text.h"
 #include "math/math.h"
-#include "ft2build.h"
-#include FT_FREETYPE_H
-
 
 mat4 foodMatrix;
 vec3 food_position;
@@ -138,31 +136,7 @@ int main()
 
     info("Application Started");
 
-    FT_Library ft;
-    if (FT_Init_FreeType(&ft))
-    {
-        error("Could not load Freetype");
-        return -1;
-    }
-
-    FT_Face face;
-    if (FT_New_Face(ft, "resources/fonts/DroidSansFallbackFull.ttf", 0, &face)){
-        error("Failed to load font");
-        return -1;
-    }
-
-    FT_Set_Pixel_Sizes(face, 0, 48);
-    if (FT_Load_Char(face, 'X', FT_LOAD_RENDER))
-    {
-        error("Failed to load glyph");
-        return -1;
-    }
-    
-
-    char snum[5];
-    sprintf(snum, "%i", face->glyph->bitmap.width);
-    info(snum);
-
+    init_text_lib();
     initDynamicArray(&snakeMatrix, 5);
     if (!glfwInit())
     {
@@ -203,6 +177,7 @@ int main()
     textureObject mainTextureObject = initTextureObject("resources/textures/happy_face.jpg");
 
     shader myShader = compileShader("shaders/vert_shader.glsl", "shaders/frag_shader.glsl");
+    shader textShader = compileShader("shaders/text_vert_shader.glsl", "shaders/text_frag_shader.glsl");
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     mat4 snake_head;
@@ -223,6 +198,8 @@ int main()
 
     useShader(myShader);
     setUniformLi(myShader, "ourTexture", 0);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -245,6 +222,9 @@ int main()
 
         useTexture(mainTextureObject);
         draw(mainObject);
+
+        useShader(textShader);
+        setUniform3f(textShader, "textColor", 0.5, 0.0, 0.0);
         glfwSwapBuffers(window);
         glfwPollEvents();
 
@@ -264,11 +244,14 @@ int main()
             check_bounds();
             last_draw = seconds;
         }
+
+
     }
     cleanRenderObject(mainObject);
     glfwTerminate();
 
     freeDynamicArray(&snakeMatrix);
+    clean_text_lib();
     info("Application Ended");
     return 0;
 }

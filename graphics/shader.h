@@ -13,7 +13,6 @@ void checkShaderCompilation(GLuint shader, const char *shaderType);
 shader compileShader(char *vertexSource, char *fragmentSource);
 
 void useShader(shader s);
-
-
+void setUniform3f(shader s, char *uniformName, GLfloat x, GLfloat y, GLfloat z);
 void setUniformLi(shader s, char *uniformName, GLint value);
 #endif
