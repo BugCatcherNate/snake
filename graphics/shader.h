@@ -1,18 +1,26 @@
 #ifndef SHADER_H
 #define SHADER_H
+
 #include <GL/glew.h>
+#include <string>
+#include <../math/math.h>
 
-typedef struct {
-    GLuint shaderProgram;
-    GLuint fragmentShader;
+class Shader {
+public:
     GLuint vertexShader;
-} shader;
+    GLuint fragmentShader;
+    GLuint shaderProgram;
 
-void checkShaderCompilation(GLuint shader, const char *shaderType);
+    Shader(const std::string& vertexSource, const std::string& fragmentSource);
+    ~Shader();
 
-shader compileShader(char *vertexSource, char *fragmentSource);
+    void use() const;
+    void setUniformLi(const std::string& uniformName, GLint value) const;
+    void setUniform3f(const std::string& uniformName, GLfloat x, GLfloat y, GLfloat z) const;
+    void setUniformMat4(const std::string& uniformName, mat4 matrix) const; // New function declaration
 
-void useShader(shader s);
-void setUniform3f(shader s, char *uniformName, GLfloat x, GLfloat y, GLfloat z);
-void setUniformLi(shader s, char *uniformName, GLint value);
-#endif
+private:
+    void compileShader(const std::string& vertexSource, const std::string& fragmentSource);
+};
+
+#endif // SHADER_H

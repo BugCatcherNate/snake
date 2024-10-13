@@ -1,26 +1,21 @@
-#ifndef UTILS_H
-#define UTILS_H
+#pragma once
 #include "../math/math.h"
+#include <vector>
+#include <string>
 
-typedef struct {
-    mat4 *data;
-    size_t size;
-    size_t capacity;
-} DynamicArray;
-
-typedef struct {
-    unsigned char *data;
+class ImageData {
+public:
+    std::vector<unsigned char> data;
     int height;
     int width;
     int nrChannels;
-} ImageData;
 
-const char *loadFile(const char *filename);
+    ImageData(const std::string& path);
+    ~ImageData();
+};
+
+std::string loadFile(const std::string& filename);
 float randomFloat(float min, float max);
-void initDynamicArray(DynamicArray *arr, size_t initialCapacity);
 float clipToNearestIncrement(float value, float increment);
-int areFloatsEqual(float a, float b, float tolerance); 
-void pushBack(DynamicArray *arr, mat4 element);
-void freeDynamicArray(DynamicArray *arr);
-ImageData* load_image(const char *path);
-#endif
+bool areFloatsEqual(float a, float b, float tolerance);
+ImageData* load_image(const std::string& path);

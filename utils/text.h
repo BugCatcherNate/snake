@@ -1,15 +1,32 @@
 #ifndef TEXT_H
 #define TEXT_H
 
-typedef struct {
-    unsigned int TextureID;
-    int width;
-    int rows;
-    int left;
-    int top;
-    unsigned int Advance; 
-} Character;
+#include <GL/glew.h>
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include <vector>
+#include <string>
 
-void init_text_lib();
-void clean_text_lib();
-#endif
+struct Character {
+    GLuint TextureID;  // ID handle of the glyph texture
+    int Width;         // Width of glyph
+    int Height;        // Height of glyph
+    int BearingX;      // Offset from baseline to left/top of glyph
+    int BearingY;      // Offset from baseline to left/top of glyph
+    int Advance;       // Offset to advance to next glyph
+};
+
+class TextLib {
+public:
+    TextLib();
+    ~TextLib();
+
+private:
+    void init_symbols();  // Declare the init_symbols function
+
+    FT_Library ft;
+    FT_Face face;
+    std::vector<Character> symbols;
+};
+
+#endif // TEXT_H
